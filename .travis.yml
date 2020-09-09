@@ -14,7 +14,7 @@ env:
 before_script:
     - env
     - docker version
-    - sh build_image.sh
+    - chmod 777 ./build_image.sh && ./build_image.sh
 
 script:
-    - sh push_image.sh
+    - chmod 777 ./push_image.sh && ./push_image.sh
