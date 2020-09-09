@@ -2,7 +2,7 @@ FROM golang:1.15.1 as builder
 LABEL AUTHOR="xwzhou@yeah.net"
 
 ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.cn,direct
+#ENV GOPROXY=https://goproxy.cn,direct
 
 WORKDIR /app
 
