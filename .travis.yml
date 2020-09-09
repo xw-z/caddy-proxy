@@ -1,0 +1,20 @@
+sudo: required
+
+services:
+  - docker
+
+language: go
+
+go:
+    - "1.14"
+
+env:
+    - GO111MODULE=on
+
+before_script:
+    - env
+    - docker version
+    - chmod 777 ./build.sh && ./build.sh
+
+script:
+    - chmod 777 ./build-images-linux.sh && ./build-images-linux.sh && chmod 777 ./push-images-linux.sh && ./push-images-linux.sh

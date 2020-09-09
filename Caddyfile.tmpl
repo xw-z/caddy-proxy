@@ -1,0 +1,57 @@
+{{ range $container := whereExist $ "Env.CADDY_HOST" }}
+{{ $network := index $container.Networks 0 }}
+{{ $virtual_host := coalesce $container.Env.VIRTUAL_HOST $network.IP }}
+{{ $virtual_port := coalesce $container.Env.VIRTUAL_PORT "80" }}
+
+{{ range $host := split $container.Env.CADDY_HOST "," }}
+{{ $host }}
+{{- if contains $container.Env "CADDY_PORT" }}:{{ $container.Env.CADDY_PORT }}
+{{- else if contains $container.Env "CADDY_TLS_EMAIL" }}:443
+{{- else if contains $container.Env "CADDY_TLS_PARAMS" }}:443
+{{- else }}:80
+{{- end }} {
+  {{ if contains $container.Env "CADDY_TLS_EMAIL" }}
+  tls {{ $container.Env.CADDY_TLS_EMAIL }}
+  {{ else if contains $container.Env "CADDY_TLS_PARAMS" }} 
+  tls {
+    {{ range $param := split $container.Env.CADDY_TLS_PARAMS ";" }}
+    {{ $param }}
+    {{ end }}
+  }
+  {{ else }}
+  tls off
+  {{ end }}
+
+
+  gzip
+  log stdout
+  errors stdout
+  
+  proxy / {{ $virtual_host }}:{{ $virtual_port }}
+  {{- if contains $container.Env "VIRTUAL_PARAMS" }} {
+    {{ range $param := split $container.Env.VIRTUAL_PARAMS ";" }}
+    {{ $param }}
+    {{ end }}
+  }
+  {{ else }} {
+    header_upstream Host {host}
+    header_upstream X-Real-IP {remote}
+    header_upstream X-Forwarded-For {remote}
+    header_upstream X-Forwarded-Proto {scheme}
+  }
+  {{ end }}
+
+}
+{{ end }}
+{{ end }}
+
+
+:80 {
+  tls off
+  index index.html index.htm
+}
+
+:443 {
+  tls self_signed
+  index index.html index.htm
+}
