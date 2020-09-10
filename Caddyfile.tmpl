@@ -1,3 +1,8 @@
+localhost:80 {
+  tls off
+  index index.html index.htm
+}
+
 {{ range $container := whereExist $ "Env.CADDY_HOST" }}
 {{ $network := index $container.Networks 0 }}
 {{ $virtual_host := coalesce $container.Env.VIRTUAL_HOST $network.IP }}
@@ -47,14 +52,3 @@
 }
 {{ end }}
 {{ end }}
-
-
-:80 {
-  tls off
-  index index.html index.htm
-}
-
-:443 {
-  tls self_signed
-  index index.html index.htm
-}

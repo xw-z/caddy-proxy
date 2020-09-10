@@ -1,1 +1,5 @@
 .git
+vendor
+cache
+go.sum*
+.vscode*

@@ -1,1 +1,4 @@
-:80
+localhost:80 {
+  tls off
+  index index.html index.htm
+}
