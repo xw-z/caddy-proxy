@@ -7,11 +7,14 @@
 {{ $host }}
 {{- if contains $container.Env "CADDY_PORT" }}:{{ $container.Env.CADDY_PORT }}
 {{- else if contains $container.Env "CADDY_TLS_EMAIL" }}:443
+{{- else if contains $container.Env "CADDY_TLS_SELF_SIGNED" }}:443
 {{- else if contains $container.Env "CADDY_TLS_PARAMS" }}:443
 {{- else }}:80
 {{- end }} {
   {{ if contains $container.Env "CADDY_TLS_EMAIL" }}
   tls {{ $container.Env.CADDY_TLS_EMAIL }}
+  {{ else if contains $container.Env "CADDY_TLS_SELF_SIGNED" }}
+  tls {{ $container.Env.CADDY_TLS_SELF_SIGNED }}
   {{ else if contains $container.Env "CADDY_TLS_PARAMS" }} 
   tls {
     {{ range $param := split $container.Env.CADDY_TLS_PARAMS ";" }}
