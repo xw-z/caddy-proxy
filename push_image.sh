@@ -5,7 +5,7 @@ set -e
 if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
     echo "Pushing CI images"
     
-    docker login -u xwzhou -p "$DOCKER_PASSWORD"
+    echo "$DOCKER_PASSWORD" | docker login --username xwzhou --password-stdin
 
     docker push xwzhou/caddy-proxy:ci
     docker push xwzhou/caddy-proxy:ci-alpine
@@ -17,7 +17,7 @@ if [[ "${TRAVIS_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-.*)?$ ]]; then
     PATCH_VERSION=$(echo $TRAVIS_TAG | cut -c2-)
     MINOR_VERSION=$(echo $PATCH_VERSION | cut -d. -f-2)
 
-    docker login -u xwzhou -p "$DOCKER_PASSWORD"
+    echo "$DOCKER_PASSWORD" | docker login --username xwzhou --password-stdin
 
     # scratch
     docker tag xwzhou/caddy-proxy:ci xwzhou/caddy-proxy:latest
