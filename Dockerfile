@@ -2,7 +2,7 @@ FROM golang:1.14 as builder
 LABEL AUTHOR="xwzhou@yeah.net"
 
 ENV GO111MODULE=on
-#ENV GOPROXY=https://goproxy.cn,direct
+ENV GOPROXY=https://goproxy.cn,direct
 
 
 RUN go get github.com/jwilder/docker-gen/...@v0.0.0-20180114214846-6455e0c860fd
@@ -28,8 +28,10 @@ COPY --from=builder /app/caddy /bin/caddy
 
 COPY ./Procfile /app/Procfile
 COPY ./Caddyfile.tmpl /app/Caddyfile.tmpl
+COPY ./service.sh /app/service.sh
 COPY ./Caddyfile /etc/Caddyfile
 
+RUN chmod 777 /app/service.sh
 
 ENTRYPOINT [ "/bin/forego", "start", "-r" ]
 
