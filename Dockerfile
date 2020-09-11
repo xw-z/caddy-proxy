@@ -15,23 +15,27 @@ COPY . /app/
 RUN go build -v -o ./caddy ./app/caddy
 
 
+FROM alpine:3.12 as alpine
+RUN apk add --no-cache ca-certificates curl bash
+
+
 FROM debian:buster-slim
 LABEL AUTHOR="xwzhou@yeah.net"
 
 
 WORKDIR /app
 
-COPY --from=builder /bin/sh /bin/sh
-COPY --from=builder /go/bin/docker-gen /bin/docker-gen 
-COPY --from=builder /go/bin/forego /bin/forego
-COPY --from=builder /app/caddy /bin/caddy
+COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /go/bin/docker-gen /bin/
+COPY --from=builder /go/bin/forego /bin/
+COPY --from=builder /app/caddy /bin/
 
 COPY ./Procfile /app/Procfile
 COPY ./Caddyfile.tmpl /app/Caddyfile.tmpl
 COPY ./service.sh /app/service.sh
-COPY ./Caddyfile /etc/Caddyfile
 
-RUN chmod 777 /app/service.sh
+RUN chmod 777 /app/service.sh \
+    && echo "80" > /etc/Caddyfile
 
 ENTRYPOINT [ "/bin/forego", "start", "-r" ]
 

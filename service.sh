@@ -12,7 +12,14 @@ stop() {
 }
 
 start(){
-    caddy -conf $CADDY_FILE -log stdout -agree -pidfile $PID_FILE
+    if [ ! -z $CADDY_EMAIL ]; then
+        if [ -z $CADDY_CA ]; then
+            CADDY_CA="https://acme-v02.api.letsencrypt.org/directory"
+        fi
+        caddy -conf $CADDY_FILE -log stdout -pidfile $PID_FILE -agree -ca $CADDY_CA -email $CADDY_EMAIL
+    else
+        caddy -conf $CADDY_FILE -log stdout -pidfile $PID_FILE
+    fi
 }
 
 _main_(){
@@ -22,7 +29,7 @@ _main_(){
     *stop* )
         stop ;;
     * )
-        echo "$1 not found." ;;
+        echo "command $1 not found." ;;
     esac
 }
 
