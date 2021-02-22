@@ -9,3 +9,6 @@ require (
 	github.com/onsi/gomega v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20200220183623-bac4c82f6975 // indirect
 )
+
+
+replace github.com/caddyserver/caddy => ./libs/github.com/caddyserver/caddy
